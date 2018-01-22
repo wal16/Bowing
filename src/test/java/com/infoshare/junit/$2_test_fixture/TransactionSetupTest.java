@@ -1,81 +1,119 @@
 package com.infoshare.junit.$2_test_fixture;
 
 import com.infoshare.junit.banking.*;
-import org.junit.*;
-import org.junit.experimental.categories.Category;
+import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.Period;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * przykład użycia before/after, beforeClass/afterClass
- */
 public class TransactionSetupTest {
 
-    private static final int TRANSACTION_COUNT = 10;
-
-    private LoggingActivityMonitor accountActivity;
-    private Account account;
-    private static AccountMonitor activityMonitor;
-
-    @BeforeClass
-    public static void createTransactionLog() {
-        activityMonitor = new LoggingActivityMonitor();
-        activityMonitor.connect();
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        account = new Account("Kent Beck");
-        account.addObserver(activityMonitor);
-        new TransactionsBuilder()
-                .after(LocalDateTime.of(2015, Month.DECEMBER, 1, 0, 0))
-                .before(LocalDateTime.of(2016, Month.APRIL, 30, 0, 0))
-                .valueBetween(1,100000)
-                .totalOf(TRANSACTION_COUNT)
-                .register(account);
-    }
+    private final ThreadLocalRandom rand = ThreadLocalRandom.current();
 
     @Test
     public void new_account_should_not_have_any_transactions() {
+        // given
         Account emptyAccount = new Account("Erich Gamma");
+
+        // when
+
+        // then
         assertEquals(emptyAccount.history().size(), 0);
     }
 
     @Test
     public void should_handle_huge_amount_of_transactions() {
-        Account intensiveAccount = new Account("Martin Fowler");
+        // given
+        AccountMonitor activityMonitor = new LoggingActivityMonitor();
+        activityMonitor.connect();
+        Account intensiveAccount = new Account("Kent Beck");
+        intensiveAccount.addObserver(activityMonitor);
+
+        // when
         TestTransactions.hugeAmountOfTransactionsFor(intensiveAccount);
+
+        // then
         assertEquals(intensiveAccount.history().size(), TestTransactions.HUGE_AMOUNT);
     }
 
-    @Category(TransactionHistoryTests.class)
     @Test
     public void should_find_all_transactions() {
-        assertEquals(account.history().size(), TRANSACTION_COUNT);
+        // given
+        AccountMonitor activityMonitor = new LoggingActivityMonitor();
+        activityMonitor.connect();
+        Account account = new Account("Martin Fowler");
+        account.addObserver(activityMonitor);
+
+        // when
+        LocalDateTime transactionDate = LocalDateTime.of(2015, Month.OCTOBER, 1, 0, 0);
+        for (int i = 0; i < 100; i++) {
+            try {
+                Integer amount = Integer.valueOf(rand.nextInt(10000));
+                account.register(new Transaction(amount, transactionDate));
+                transactionDate = transactionDate.plus(Period.ofDays(1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // then
+        assertEquals(account.history().size(), 100);
     }
 
-    @Category(TransactionHistoryTests.class)
     @Test
     public void should_find_transactions_from_specific_period() {
+        // given
+        AccountMonitor activityMonitor = new LoggingActivityMonitor();
+        activityMonitor.connect();
+        Account account = new Account("Martin Fowler");
+        account.addObserver(activityMonitor);
+
+        // when
+        LocalDateTime transactionDate = LocalDateTime.of(2015, Month.OCTOBER, 1, 0, 0);
+        for (int i = 0; i < 100; i++) {
+            try {
+                Integer amount = Integer.valueOf(rand.nextInt(10000));
+                account.register(new Transaction(amount, transactionDate));
+                transactionDate = transactionDate.plus(Period.ofDays(3));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // then
         LocalDate start = LocalDate.of(2016, 3, 20);
         LocalDate end = LocalDate.of(2016, 4, 1);
-        assertTrue(account.historyBetween(start, end).size()>0);
+        assertTrue(account.historyBetween(start, end).size() > 0);
     }
 
     @Test(expected = DuplicatedTransactionException.class)
-    public void should_not_register_same_transaction_twice() throws DuplicatedTransactionException, InvalidTransactionException {
+    public void should_not_register_same_transaction_twice() throws Exception {
+        // given
+        AccountMonitor activityMonitor = new LoggingActivityMonitor();
+        activityMonitor.connect();
+        Account account = new Account("Robert Martin");
+        account.addObserver(activityMonitor);
+        LocalDateTime transactionDate = LocalDateTime.of(2015, Month.OCTOBER, 1, 0, 0).plus(Period.ofDays(3));
+        for (int i = 0; i < 100; i++) {
+            try {
+                Integer amount = Integer.valueOf(rand.nextInt(10000));
+                account.register(new Transaction(amount, transactionDate));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // when
         Transaction duplicate = account.history().iterator().next();
         account.register(duplicate);
-    }
 
-    @AfterClass
-    public static void closeTransactionLog() {
-        activityMonitor.close();
+        // then throws exception
     }
 
 }

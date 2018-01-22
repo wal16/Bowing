@@ -1,7 +1,6 @@
 package com.infoshare.junit.$7_mocks;
 
 import com.infoshare.junit.banking.*;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -14,7 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
@@ -39,8 +37,8 @@ public class BankTest {
         targetAccount.addObserver(accountMonitor);
         targetAccount.addObserver(loggingMonitor);
 
-        sourceAccount.register(new Transaction(BigDecimal.valueOf(10000), LocalDateTime.now()));
-        targetAccount.register(new Transaction(BigDecimal.valueOf(10000), LocalDateTime.now()));
+        sourceAccount.register(new Transaction(10000, LocalDateTime.now()));
+        targetAccount.register(new Transaction(10000, LocalDateTime.now()));
 
         //
         assertThat(sourceAccount.countObservers()).isEqualTo(2);
@@ -58,23 +56,20 @@ public class BankTest {
         LocalDateTime transactionDate = LocalDateTime.of(2016, Month.OCTOBER, 2, 0, 0);
 
         // when
-        when(sourceAccount.transferTo(isA(Account.class), isA(BigDecimal.class), isA(LocalDateTime.class)))
-                .thenReturn( new Transaction(BigDecimal.valueOf(500), transactionDate, sourceAccount, targetAccount));
-        when(targetAccount.transferTo(isA(Account.class), isA(BigDecimal.class), isA(LocalDateTime.class)))
-                .thenReturn( new Transaction(BigDecimal.valueOf(500), transactionDate, targetAccount, sourceAccount));
+        // TODO use when(...).thenReturn(...) to make test pass
 
-        Transaction t = sourceAccount.transferTo(targetAccount, BigDecimal.ZERO, LocalDateTime.now());
+        Transaction t = sourceAccount.transferTo(targetAccount, 0, LocalDateTime.now());
         bank.register(t);
         bank.process();
 
-        t = targetAccount.transferTo(sourceAccount, BigDecimal.ZERO, LocalDateTime.now());
+        t = targetAccount.transferTo(sourceAccount, 0, LocalDateTime.now());
         bank.register(t);
         bank.process();
 
         // then
         assertThat(t.getAmount()).isEqualTo("500");
-        verify(sourceAccount, times(2)).register(any());
-        verify(targetAccount, times(2)).register(any());
+
+        // TODO use verify to satisfy test conditions
     }
 
     @Test

@@ -1,24 +1,22 @@
-package com.infoshare.junit.$2_test_fixture;
+package com.infoshare.junit.banking;
 
-import com.infoshare.junit.banking.*;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 public class TransactionsBuilder {
     private final Random rand = new Random();
-    private int total = 100;
+    private int total = 20;
     private LocalDateTime before = LocalDateTime.now();
     private LocalDateTime after = before.minus(Period.ofMonths(1));
-    private long diffMinutes;
-    private long minValue;
-    private long maxValue;
+    private long diffMinutes = ChronoUnit.MINUTES.between(after, before);
+    private int minValue = 100;
+    private int maxValue = 100;
     private DateGenerator dateGenerator = new LinearDateGenerator();
     private TransferBank bank;
 
@@ -48,35 +46,38 @@ public class TransactionsBuilder {
         return this;
     }
 
-    public TransactionsBuilder valueBetween(long min, long max) {
+    public TransactionsBuilder valueBetween(int min, int max) {
         minValue = min;
         maxValue = max;
         return this;
     }
 
-    public TransactionsBuilder value(long value) {
+    public TransactionsBuilder value(int value) {
         minValue = maxValue = value;
         return this;
     }
 
-    public Set<Transaction> build() {
-        DoubleStream doubles = valueStream();
+    public List<Transaction> build() {
+        IntStream integers = valueStream();
         long d = diffMinutes / total;
         final int[] transactionCount = {0};
-        return doubles.mapToObj(value -> {
+
+        List<Transaction> transactionList = integers.mapToObj(value -> {
             LocalDateTime nextDate = dateGenerator.getNextDate(after, d, transactionCount[0]);
-            Transaction transaction = new Transaction(BigDecimal.valueOf(value), nextDate);
+            Transaction transaction = new Transaction(value, nextDate);
             transactionCount[0]++;
             return transaction;
-        }).collect(Collectors.toSet());
+        }).collect(Collectors.toList());
+
+        return transactionList;
     }
 
-    private DoubleStream valueStream() {
+    private IntStream valueStream() {
         if (minValue == maxValue) {
-            return DoubleStream.iterate(minValue, i -> minValue).limit(total);
+            return IntStream.iterate(minValue, i -> minValue).limit(total);
         }
         Random rand = new Random();
-        return rand.doubles(total, minValue, maxValue);
+        return rand.ints(total, minValue, maxValue);
     }
 
     public void register(Account account) {
@@ -92,14 +93,14 @@ public class TransactionsBuilder {
     }
 
     public Set<Transaction> transferBetween(Account sourceAccount, Account targetAccount) {
-        DoubleStream doubles = valueStream();
+        IntStream doubles = valueStream();
         long d = diffMinutes / total;
         final int[] transactionCount = {0};
         Set<Transaction> transactions = doubles.mapToObj(value -> {
             LocalDateTime nextDate = dateGenerator.getNextDate(after, d, transactionCount[0]);
             Transaction transaction = null;
             try {
-                transaction = sourceAccount.transferTo(targetAccount, BigDecimal.valueOf(value), nextDate);
+                transaction = sourceAccount.transferTo(targetAccount, value, nextDate);
                 transactionCount[0]++;
             } catch (InvalidTransactionException e) {
                 e.printStackTrace();

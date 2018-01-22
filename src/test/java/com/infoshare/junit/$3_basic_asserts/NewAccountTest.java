@@ -20,22 +20,26 @@ public class NewAccountTest {
 
     @Test
     public void new_account_should_have_empty_history_1() {
-        assertSame(0, emptyAccount.history().size());
+        // TODO use assertSame, assertEquals, assertArrayEquals, assertTrue
+        fail();
     }
 
     @Test
     public void new_account_should_have_empty_history_2() {
-        assertEquals(new HashSet<Transaction>(), emptyAccount.history());
+        // TODO use assertSame, assertEquals, assertArrayEquals, assertTrue
+        fail();
     }
 
     @Test
     public void new_account_should_have_empty_history_3() {
-        assertArrayEquals(new Transaction[]{}, emptyAccount.history().toArray());
+        // TODO use assertSame, assertEquals, assertArrayEquals, assertTrue
+        fail();
     }
 
     @Test
     public void new_account_should_have_empty_history_4() {
-        assertTrue(emptyAccount.history().size() == 0);
+        // TODO use assertSame, assertEquals, assertArrayEquals, assertTrue
+        fail();
     }
 
 }

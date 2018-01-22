@@ -1,19 +1,18 @@
 package com.infoshare.junit.$3_basic_asserts;
 
-import com.infoshare.junit.$2_test_fixture.TransactionsBuilder;
 import com.infoshare.junit.banking.Account;
 import com.infoshare.junit.banking.Transaction;
+import com.infoshare.junit.banking.TransactionsBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
 public class TransactionTest {
@@ -25,40 +24,40 @@ public class TransactionTest {
     @Before
     public void setUp() throws Exception {
         account = new Account("Kent Beck");
-        new TransactionsBuilder()
-                .after(LocalDateTime.of(2015, Month.DECEMBER, 1, 0, 0))
-                .before(LocalDateTime.of(2016, Month.APRIL, 30, 0, 0))
-                .valueBetween(1, 100000)
-                .totalOf(TRANSACTION_COUNT)
-                .register(account);
+//        new TransactionsBuilder()
+//                .after(LocalDateTime.of(2015, Month.DECEMBER, 1, 0, 0))
+//                .before(LocalDateTime.of(2016, Month.APRIL, 30, 0, 0))
+//                .valueBetween(1, 100000)
+//                .totalOf(TRANSACTION_COUNT)
+//                .register(account);
     }
 
     @Test
     public void account_balance_should_be_equal_to_sum_of_transactions() throws Exception {
-        BigDecimal historyBalance = sumOfTransactions(account.history());
-// uncomment to see error message
-//        account.register(new Transaction(BigDecimal.TEN,LocalDateTime.now()));
-        assertEquals(historyBalance, account.getBalance());
+        // TODO use assertEquals, assertTrue, assertFalse
+        fail();
     }
 
     @Test
     public void registering_transaction_should_change_balance_1() throws Exception {
         // given
-        BigDecimal originalBalance = account.getBalance();
+        Integer originalBalance = account.getBalance();
         // when
         new TransactionsBuilder().value(100).totalOf(1).register(account);
         // then
-        assertFalse(account.getBalance().equals(originalBalance));
+        // TODO use assertEquals, assertTrue, assertFalse
+        fail();
     }
 
     @Test
     public void registering_transaction_should_change_balance_2() throws Exception {
         // given
-        BigDecimal originalBalance = account.getBalance();
+        Integer originalBalance = account.getBalance();
         // when
         new TransactionsBuilder().value(100).totalOf(1).register(account);
         // then
-        assertTrue(account.getBalance().doubleValue()>originalBalance.doubleValue());
+        // TODO use assertEquals, assertTrue, assertFalse
+        fail();
     }
 
     @Test
@@ -68,7 +67,8 @@ public class TransactionTest {
         // when
         new TransactionsBuilder().valueBetween(100, 1000).totalOf(1).register(account);
         // then
-        assertNotEquals(originalHistory, account.history());
+        // TODO use assertEquals, assertNotEquals, assertTrue, assertFalse
+        fail();
     }
 
     @Test
@@ -76,17 +76,22 @@ public class TransactionTest {
         Set<Transaction> historyOne = account.history();
         Set<Transaction> historyTwo = account.history();
 
-// uncomment to fail test - assertSame asserts that two objects refer to the same object
-//        assertSame("history shouldn't change", historyOne, historyTwo);
+        // TODO - why this assertion fails? fix it
+        assertSame("history shouldn't change", historyOne, historyTwo);
 
-// assertEquals - asserts that two objects are equals
-        assertEquals("history shouldn't change", historyOne, historyTwo);
     }
 
-    private BigDecimal sumOfTransactions(Collection<Transaction> transactions) {
-        return transactions.stream()
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.ZERO, (acc, value) -> acc.add(value, MathContext.DECIMAL32));
+    @Test
+    public void verifyEquals() {
+        Transaction[] transactions = new TransactionsBuilder().withRandomDates().value(100).totalOf(20).build().toArray(new Transaction[2]);
+        assertThat(transactions).doesNotContainNull();
+        EqualsVerifier.forClass(Transaction.class)
+                .withIgnoredFields("status") // comment to see error messages
+                .withPrefabValues(Transaction.class,transactions[0],transactions[1]).verify();
+    }
+
+    private Integer sumOfTransactions(Collection<Transaction> transactions) {
+        return transactions.stream().collect(Collectors.summingInt(t->t.getAmount()));
     }
 }
 

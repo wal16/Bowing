@@ -1,21 +1,22 @@
 package com.infoshare.junit.$4_matchers;
 
-import com.infoshare.junit.$2_test_fixture.TransactionsBuilder;
 import com.infoshare.junit.banking.Account;
 import com.infoshare.junit.banking.Transaction;
+import com.infoshare.junit.banking.TransactionsBuilder;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.junit.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 
 public class TransactionMatchersTest {
 
@@ -36,30 +37,36 @@ public class TransactionMatchersTest {
 
     @Test
     public void account_balance_should_be_equal_to_sum_of_transactions() throws Exception {
-        BigDecimal historyBalance = sumOfTransactions(account.history());
+        Integer historyBalance = sumOfTransactions(account.history());
 // uncomment to see error message
 //        account.register(new Transaction(BigDecimal.TEN,LocalDateTime.now()));
-        assertThat(account.getBalance(), is(equalTo(historyBalance)));
+        assertEquals(historyBalance, account.getBalance());
+        // TODO express assert above using hamcrest matchers
+        fail();
     }
 
     @Test
     public void registering_transaction_should_change_balance_1() throws Exception {
         // given
-        BigDecimal originalBalance = account.getBalance();
+        Integer originalBalance = account.getBalance();
         // when
         new TransactionsBuilder().value(100).totalOf(1).register(account);
         // then
-        assertThat(account.getBalance(), is(not(originalBalance)));
+        assertFalse(account.getBalance().equals(originalBalance));
+        // TODO express assert above using hamcrest matchers
+        fail();
     }
 
     @Test
     public void registering_transaction_should_change_balance_2() throws Exception {
         // given
-        BigDecimal originalBalance = account.getBalance();
+        Integer originalBalance = account.getBalance();
         // when
         new TransactionsBuilder().value(100).totalOf(1).register(account);
         // then
-        assertThat(account.getBalance(),is(greaterThan(originalBalance)));
+        assertTrue(account.getBalance().doubleValue()>originalBalance.doubleValue());
+        // TODO express assert above using hamcrest matchers
+        fail();
     }
 
     @Test
@@ -70,23 +77,25 @@ public class TransactionMatchersTest {
         new TransactionsBuilder().valueBetween(100, 1000).totalOf(1).register(account);
         // then
 
-        assertThat(account.history(),
-                hasItem(hasProperty("amount",
-                        allOf(greaterThan(BigDecimal.valueOf(10)),lessThan(BigDecimal.valueOf(1000)))))
-        );
+        assertNotEquals(originalHistory, account.history());
+        // TODO express assert above using hamcrest matchers
+        // TODO check if every transaction has amount between 100 and 1000
+        fail();
     }
 
     @Test
     public void account_should_not_change_history_without_adding_transaction() {
+        // when
         Set<Transaction> historyOne = account.history();
         Set<Transaction> historyTwo = account.history();
-        assertThat("history shouldn't change", historyOne, containsInAnyOrder(historyTwo.toArray(new Transaction[historyTwo.size()])));
+        // then
+        assertEquals("history shouldn't change", historyOne, historyTwo);
+        // TODO express assert above using hamcrest matchers
+        fail();
     }
 
-    private BigDecimal sumOfTransactions(Collection<Transaction> transactions) {
-        return transactions.stream()
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.ZERO, (acc, value) -> acc.add(value, MathContext.DECIMAL32));
+    private Integer sumOfTransactions(Collection<Transaction> transactions) {
+        return transactions.stream().collect(Collectors.summingInt(t -> t.getAmount()));
     }
 }
 

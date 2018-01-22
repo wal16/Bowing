@@ -1,36 +1,34 @@
 package com.infoshare.junit.banking;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Transaction implements Comparable<Transaction> {
 
-    private final BigDecimal amount;
+    private final Integer amount;
     private final LocalDateTime date;
     private final Account source;
     private final Account target;
 
     private TransactionStatus status = TransactionStatus.NEW;
 
-    public Transaction(BigDecimal amount, LocalDateTime date, Account source, Account target) {
-        this.amount = amount.round(MathContext.DECIMAL32);
+    public Transaction(Integer amount, LocalDateTime date, Account source, Account target) {
+        this.amount = amount;
         this.date = date;
         this.source = source;
         this.target = target;
     }
 
-    public Transaction(BigDecimal bigDecimal, LocalDateTime now) {
-        this.amount = bigDecimal;
-        this.date = now;
-        source = target = null;
+    public Transaction(Integer amount, LocalDateTime now) {
+        this(amount, now, null, null);
     }
 
     public LocalDateTime getDate() {
         return date;
     }
 
-    public BigDecimal getAmount() {
+    public Integer getAmount() {
         return amount;
     }
 
@@ -56,37 +54,38 @@ public class Transaction implements Comparable<Transaction> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Transaction)) {
+            return false;
+        }
 
         Transaction that = (Transaction) o;
 
-        if (!amount.equals(that.amount)) return false;
-        if (!date.equals(that.date)) return false;
-        if (source != null ? !source.equals(that.source) : that.source != null) return false;
-        if (target != null ? !target.equals(that.target) : that.target != null) return false;
-        return status == that.status;
+        if (!Objects.equals(amount,that.amount)) return false;
+        if (!Objects.equals(date,that.date)) return false;
+        if (!Objects.equals(source,that.source)) return false;
+        if (!Objects.equals(target,that.target)) return false;
+        return true;
 
     }
 
     @Override
-    public int hashCode() {
-        int result = amount.hashCode();
-        result = 31 * result + date.hashCode();
-        result = 31 * result + (source != null ? source.hashCode() : 0);
-        result = 31 * result + (target != null ? target.hashCode() : 0);
-        result = 31 * result + status.hashCode();
+    public final int hashCode() {
+        int result = Objects.hashCode(amount);
+        result = 31 * result + Objects.hashCode(date);
+        result = 31 * result + Objects.hashCode(source);
+        result = 31 * result + Objects.hashCode(target);
         return result;
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
-                "amount=" + amount +
-                ", date=" + date +
-                ", source=" + source +
-                ", target=" + target +
+                "amount=" + Objects.toString(amount) +
+                ", date=" + Objects.toString(date) +
+                ", source=" + Objects.toString(source) +
+                ", target=" + Objects.toString(target) +
                 ", status=" + status +
                 '}';
     }
