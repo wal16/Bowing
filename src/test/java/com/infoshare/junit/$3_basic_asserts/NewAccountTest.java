@@ -1,13 +1,10 @@
 package com.infoshare.junit.$3_basic_asserts;
 
 import com.infoshare.junit.banking.Account;
-import com.infoshare.junit.banking.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 public class NewAccountTest {
 

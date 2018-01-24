@@ -3,14 +3,10 @@ package com.infoshare.junit.$6_stubs;
 import com.infoshare.junit.banking.Account;
 import com.infoshare.junit.banking.GenericBank;
 import com.infoshare.junit.banking.TransferBank;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TransferBankTest {
 

@@ -3,11 +3,8 @@ package com.infoshare.junit.$2_test_fixture;
 import com.infoshare.junit.banking.Account;
 import com.infoshare.junit.banking.TransactionsBuilder;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.chrono.ChronoPeriod;
-import java.time.temporal.TemporalUnit;
 
 public class TestTransactions {
     private static final int DEFAULT_AMOUNT = 100;

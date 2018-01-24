@@ -3,19 +3,15 @@ package com.infoshare.junit.$4_matchers;
 import com.infoshare.junit.banking.Account;
 import com.infoshare.junit.banking.Transaction;
 import com.infoshare.junit.banking.TransactionsBuilder;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class TransactionMatchersTest {

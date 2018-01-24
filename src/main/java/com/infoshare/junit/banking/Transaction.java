@@ -1,6 +1,5 @@
 package com.infoshare.junit.banking;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

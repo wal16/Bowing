@@ -2,7 +2,6 @@ package com.infoshare.junit.banking;
 
 import com.google.common.collect.ImmutableSet;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
