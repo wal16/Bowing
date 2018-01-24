@@ -1,6 +1,9 @@
 package com.infoshare.junit.$9_bowling;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 /*
 
@@ -21,6 +24,12 @@ public class BowlingGameTest {
 
     @Test
     public void test1() {
+        Game game = new Game();
+        for (int i=0;i<20;i++) {
+            game.roll(0);
+        }
+        int finalScore = game.score();
+        fail();
     }
 
 }
