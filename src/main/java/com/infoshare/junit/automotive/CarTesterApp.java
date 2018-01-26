@@ -4,7 +4,7 @@ public class CarTesterApp {
 
     public static void main(String[] args) throws Exception {
         CarTester carTester = new CarTester();
-        carTester.testEmissionLevel();
+//        carTester.testEmissionLevel();
         carTester.testIgnition();
 
         System.out.println("-                      -");
