@@ -37,8 +37,8 @@ public class GenericBank implements TransferBank {
                 return;
             }
 
-            Transaction deduction = new Transaction(-1 * t.getAmount(), now, t.getSource(), t.getTarget());
-            Transaction deposit = new Transaction(t.getAmount(), now, t.getSource(), t.getTarget());
+            Transaction deduction = new Transaction(-1 * t.getAmount(), t.getDate(), t.getSource(), t.getTarget());
+            Transaction deposit = new Transaction(t.getAmount(), t.getDate(), t.getSource(), t.getTarget());
             try {
                 t.getSource().register(deduction);
                 t.getTarget().register(deposit);
