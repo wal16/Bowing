@@ -3,6 +3,8 @@ package com.infoshare.junit.$9_bowling;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import com.infoshare.junit.bowling.Game;
+
 import static org.junit.Assert.fail;
 
 /*
