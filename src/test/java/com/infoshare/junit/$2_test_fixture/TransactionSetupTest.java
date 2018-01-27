@@ -1,6 +1,8 @@
 package com.infoshare.junit.$2_test_fixture;
 
 import com.infoshare.junit.banking.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -15,6 +17,10 @@ import static org.junit.Assert.assertTrue;
 public class TransactionSetupTest {
 
     private final ThreadLocalRandom rand = ThreadLocalRandom.current();
+
+
+
+
 
     @Test
     public void new_account_should_not_have_any_transactions() {

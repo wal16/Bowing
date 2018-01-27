@@ -1,6 +1,11 @@
 package com.infoshare.junit.$9_bowling;
 
+import com.infoshare.junit.automotive.Brand;
+import com.infoshare.junit.automotive.Car;
+import com.infoshare.junit.automotive.CarFactory;
+import com.infoshare.junit.automotive.EmissionLevel;
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.infoshare.junit.bowling.Game;
@@ -33,5 +38,40 @@ public class BowlingGameTest {
         int finalScore = game.score();
         fail();
     }
+
+    //TODO 0 point per game
+    @Test
+    public void player_have_0_point() {
+        Game game = new Game();
+        for (int i=0;i<20;i++) {
+            game.roll(0);
+        }
+        int finalScore = game.score();
+        Assert.assertTrue(finalScore ==0);
+    }
+
+
+
+
+    //TODO 200 point per game
+
+
+
+
+
+    //TODO 300 point per game
+
+    @Test
+    public void player_have_300_point() {
+        Game game = new Game();
+        for (int i=0;i<12;i++) {
+            game.roll(0);
+        }
+        int finalScore = game.score();
+        Assert.assertTrue(finalScore ==300);
+    }
+
+
+
 
 }

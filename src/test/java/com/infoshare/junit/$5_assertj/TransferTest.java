@@ -1,6 +1,7 @@
 package com.infoshare.junit.$5_assertj;
 
 import com.infoshare.junit.banking.*;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Before;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collection;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 @FixMethodOrder(MethodSorters.JVM)
@@ -79,6 +81,7 @@ public class TransferTest {
     public void bank_should_sucessfully_transfer_between_accounts() throws Exception {
         // given
         Integer initialTargetBalance = targetAccount.getBalance();
+        Integer initialsourceAccount = sourceAccount.getBalance();
         Transaction t = sourceAccount.transferTo(targetAccount, 500, LocalDateTime.now());
 
         // when
@@ -88,7 +91,8 @@ public class TransferTest {
         // then
 
         // TODO use Assertions.assertThat to verify correct transfer
-        fail();
+        Assertions.assertThat(targetAccount.getBalance()).isEqualTo(initialTargetBalance+500);
+        Assertions.assertThat(sourceAccount.getBalance()).isEqualTo(initialTargetBalance-500);
     }
 
     @Test
@@ -104,6 +108,7 @@ public class TransferTest {
         t2 = sourceAccount.transferTo(targetAccount, 1500, LocalDateTime.now());
         bank.register(t2);
         bank.process();
+
         bank.process();
 
         // then
@@ -111,7 +116,8 @@ public class TransferTest {
 
         // TODO use SoftAssertions.assertThat to verify that only registered transactions were processed
         // change any values to see how soft assertions report errors
-        fail();
+        assertThat(targetAccount.getBalance()).isEqualTo(initialTargetBalance + 2000);
+        assertThat(sourceAccount.getBalance()).isEqualTo(initialTargetBalance - 2000);
     }
 
     @Test
@@ -127,7 +133,9 @@ public class TransferTest {
         // then
 
         // TODO use Assertions.assertThat to verify test
-        fail();
+        assertThat(processedTransactions)
+                .extracting("status")
+                .contains(TransactionStatus.ON_HOLD);
     }
 
     @Test

@@ -13,27 +13,45 @@ public class CarUnitTest {
     public void toyota_engine_should_be_running_after_ignition() throws Exception {
         Car sut = new CarFactory().forBrand(Brand.TOYOTA).build();
         sut.ignite();
-        Assert.assertTrue("OMG! Car is not running after ignition", sut.isRunning());
+        Assert.assertTrue("OMG! Car is not running after start engine", sut.isRunning());
     }
 
     // TODO write a test that checks if honda can start engine
+    @Test
+    public void can_honda_start_engine() throws Exception {
+        Car sut = new CarFactory().forBrand(Brand.HONDA).build();
+        sut.ignite();
+        Assert.assertTrue("OMG! Car is not running after ignition", sut.isRunning());
+    }
 
     @Test
     public void honda_emmission_level_should_be_normal() throws Exception {
         Car sut = new CarFactory().forBrand(Brand.HONDA).build();
         sut.ignite();
-        Assert.assertTrue("emmission level should be normal", EmissionLevel.NORMAL==sut.measurePollution());
+        Assert.assertTrue("emmission level should be normal", EmissionLevel.NORMAL == sut.measurePollution());
     }
 
     @Test
     public void vw_emmission_level_should_be_normal() throws Exception {
         Car sut = new CarFactory().forBrand(Brand.VW).build();
         sut.ignite();
-        Assert.assertTrue("emmission level should be normal", EmissionLevel.NORMAL==sut.measurePollution());
+        Assert.assertTrue("emmission level should be normal", EmissionLevel.NORMAL == sut.measurePollution());
     }
 
     // TODO write a test that checks if toyota has a normal emission level
+    @Test
+    public void toyota_emmission_level_should_be_normal() throws Exception {
+        Car sut = new CarFactory().forBrand(Brand.TOYOTA).build();
+        sut.ignite();
+        Assert.assertTrue("emmission level should be normal", EmissionLevel.NORMAL == sut.measurePollution());
+    }
+
 
     // TODO write a test that checks if we throw an exception for unsupported brands
 
+    @Test(expected = Exception.class)
+    public void factory_sholudnt_support_FSO() throws Exception {
+        new CarFactory().forBrand(Brand.FSO).build();
+
+    }
 }
